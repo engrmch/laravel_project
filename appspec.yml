@@ -1,0 +1,12 @@
+version: 0.0
+os: linux
+
+files:
+  - source: /
+    destination: /var/www/html/laravel_project
+
+hooks:
+  AfterInstall:
+    - location: scripts/deploy.sh
+      timeout: 180
+      runas: ec2-user
