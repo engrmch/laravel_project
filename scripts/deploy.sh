@@ -1,15 +1,16 @@
 #!/bin/bash
+set -e  # stop on first error
 
 cd /var/www/html/laravel_project
 
+echo "Running composer install..."
 composer install --no-dev --optimize-autoloader
 
-php artisan migrate --force
+echo "Setting permissions..."
+chmod -R 775 storage bootstrap/cache
+chown -R apache:apache .
 
-sudo chown -R apache:apache storage bootstrap/cache
-sudo chmod -R 775 storage bootstrap/cache
-
+echo "Running Laravel commands..."
+php artisan config:clear
 php artisan config:cache
-php artisan route:cache
-
-sudo systemctl restart httpd
+php artisan migrate --force
