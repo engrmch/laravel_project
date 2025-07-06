@@ -8,5 +8,5 @@ files:
 hooks:
   AfterInstall:
     - location: scripts/deploy.sh
-      timeout: 180
-      runas: ec2-user
+      timeout: 300
+      runas: root
