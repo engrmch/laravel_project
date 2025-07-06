@@ -3,7 +3,7 @@
 # Navigate to the application's root directory (adjust path if needed)
 # The deployment-archive is where CodeDeploy puts your files.
 # Assuming files are copied to /var/www/html/your-laravel-app/ as per your appspec.yml's 'destination'
-CODEDEPLOY_APP_DIR="/var/www/html/your-laravel-app"
+CODEDEPLOY_APP_DIR="/var/www/html/laravel_project"
 cd $CODEDEPLOY_APP_DIR
 
 echo "Running AfterInstall hooks..."
