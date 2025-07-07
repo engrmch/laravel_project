@@ -27,11 +27,10 @@ phases:
       - echo "Installing symfony/mailer..."
       - composer require symfony/mailer symfony/http-client
       
-       # 💡 Run composer install with scripts disabled to prevent artisan call
+      # 💡 Run composer install with scripts disabled to prevent artisan call
       - echo "Installing project dependencies (scripts disabled)..."
       - composer install --no-scripts --no-interaction --prefer-dist
 
-      # ✅ Now Laravel directories exist, run artisan scripts
       - echo "Running post-install artisan scripts manually..."
       - php artisan package:discover
 
