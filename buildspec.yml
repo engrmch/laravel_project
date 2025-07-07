@@ -18,6 +18,15 @@ phases:
       - mkdir -p storage/logs
       - chmod -R 777 bootstrap/cache # Add this line
       - chmod -R 777 storage
+
+      # Remove abandoned swiftmailer package if present
+      - echo "Removing swiftmailer..."
+      - composer remove swiftmailer/swiftmailer || true
+
+      # Add symfony/mailer and required dependencies
+      - echo "Installing symfony/mailer..."
+      - composer require symfony/mailer symfony/http-client
+      
       # Note: 777 is for build environments. For deployed code, restrict permissions further.
       - echo "Installing Composer dependencies..."
       - composer install --no-interaction --prefer-dist # Add --no-interaction and --prefer-dist for CI
