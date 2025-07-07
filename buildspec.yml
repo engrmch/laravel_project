@@ -5,13 +5,14 @@ phases:
     runtime-versions:
       php: 8.1 # This tells CodeBuild to use PHP 8.1
     commands:
-      - echo "--- BUILD INITIATED WITH LATEST BUILDSPEC VERSION X.X ---" # <-- Add this line
+      - echo "--- BUILD INITIATED WITH LATEST BUILDSPEC VERSION X.X ---"
+       - cd $CODEBUILD_SRC_DIR # ✅ Change to the project root
       - echo "Installing Composer..."
       - curl -sS https://getcomposer.org/installer | php
       - mv composer.phar /usr/local/bin/composer
+      - echo "Ensuring bootstrap/cache exists and is writable..."
       # Add these lines to ensure cache directory exists and is writable
       - mkdir -p bootstrap/cache # Ensure the directory exists
-      - chmod -R 777 storage bootstrap/cache # Give write permissions to storage and cache
       - chmod -R 777 bootstrap/cache # Add this line
       # Note: 777 is for build environments. For deployed code, restrict permissions further.
       - echo "Installing Composer dependencies..."
@@ -19,12 +20,14 @@ phases:
 
   pre_build:
     commands:
+      - cd $CODEBUILD_SRC_DIR
       - echo "Setting up environment..."
       - cp .env.example .env || true
       - php artisan key:generate || true
 
   build:
     commands:
+      - cd $CODEBUILD_SRC_DIR
       - echo "Running migrations..."
       - php artisan migrate --force || true
       - echo "Laravel application build completed."
