@@ -9,21 +9,30 @@ phases:
       - echo "Installing Composer..."
       - curl -sS https://getcomposer.org/installer | php
       - mv composer.phar /usr/local/bin/composer
+      # Add these lines to ensure cache directory exists and is writable
+      - mkdir -p bootstrap/cache # Ensure the directory exists
+      - chmod -R 777 storage bootstrap/cache # Give write permissions to storage and cache
+      # Note: 777 is for build environments. For deployed code, restrict permissions further.
       - echo "Installing Composer dependencies..."
-      - composer install
+      - composer install --no-interaction --prefer-dist # Add --no-interaction and --prefer-dist for CI
 
   pre_build:
     commands:
-      - echo "Pre-build phase (e.g., running tests)"
+      - echo "Setting up environment..."
+      - cp .env.example .env || true
+      - php artisan key:generate || true
 
   build:
     commands:
-      - echo "Build phase (e.g., compiling assets, application build steps)"
+      - echo "Running migrations..."
+      - php artisan migrate --force || true
+      - echo "Laravel application build completed."
 
   post_build:
     commands:
-      - echo "Post-build phase (e.g., deployment, cleanup)"
+      - echo "Build completed!"
 
 artifacts:
   files:
     - '**/*' # This packages all files as the build artifact. Adjust as needed.
+    discard-paths: no
