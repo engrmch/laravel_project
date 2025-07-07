@@ -27,9 +27,9 @@ phases:
       - echo "Installing symfony/mailer..."
       - composer require symfony/mailer symfony/http-client
       
-      # 💡 Run composer install with scripts disabled to prevent artisan call
-      - echo "Installing project dependencies (scripts disabled)..."
-      - composer install --no-scripts --no-interaction --prefer-dist
+      # ✅ Composer install with scripts disabled and superuser allowed
+      - echo "Installing dependencies without scripts (as root)..."
+      - COMPOSER_ALLOW_SUPERUSER=1 composer install --no-scripts --no-interaction --prefer-dist
 
       - echo "Running post-install artisan scripts manually..."
       - php artisan package:discover
