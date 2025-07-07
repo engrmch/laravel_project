@@ -7,8 +7,8 @@ files:
 
 hooks:
   BeforeInstall:
-    - location: scripts/cleanup.sh # A new script to delete existing deploy.sh
-      timeout: 60
+    - location: scripts/full_cleanup_before_install.sh # A new script to delete existing deploy.sh
+      timeout: 300
       runas: root # Might need root to remove files in /var/www/html
 
   AfterInstall:
