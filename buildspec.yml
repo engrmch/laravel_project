@@ -3,15 +3,27 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      php: 8.1 # This is the ONLY line needed to tell CodeBuild to use PHP 8.1
+      php: 8.1 # This tells CodeBuild to use PHP 8.1
     commands:
-      # No 'phpenv install' here. CodeBuild handles it.
-      - echo "Dependencies will be installed here if needed (e.g., composer install)"
+      # DO NOT PUT 'echo "Installing custom PHP version..."' HERE
+      # DO NOT PUT 'phpenv install 8.1' HERE
+      # These lines must be REMOVED from your buildspec.yml
+      # Any other installation commands, like composer install, would go here.
+      - echo "PHP 8.1 is now set up by CodeBuild. Proceeding with other installations..."
+      # Example: - composer install --no-interaction --prefer-dist
+
+  pre_build:
+    commands:
+      - echo "Pre-build phase (e.g., running tests)"
 
   build:
     commands:
-      - echo "Build steps will go here."
+      - echo "Build phase (e.g., compiling assets, application build steps)"
+
+  post_build:
+    commands:
+      - echo "Post-build phase (e.g., deployment, cleanup)"
 
 artifacts:
   files:
-    - '**/*' # Adjust this as needed for your build output.
+    - '**/*' # This packages all files as the build artifact. Adjust as needed.
