@@ -12,8 +12,12 @@ phases:
       - mv composer.phar /usr/local/bin/composer
       - echo "Ensuring bootstrap/cache exists and is writable..."
       # Add these lines to ensure cache directory exists and is writable
-      - mkdir -p bootstrap/cache # Ensure the directory exists
+      - mkdir -p bootstrap/cache
+      - mkdir -p storage/framework/views
+      - mkdir -p storage/framework/cache
+      - mkdir -p storage/logs
       - chmod -R 777 bootstrap/cache # Add this line
+      - chmod -R 777 storage
       # Note: 777 is for build environments. For deployed code, restrict permissions further.
       - echo "Installing Composer dependencies..."
       - composer install --no-interaction --prefer-dist # Add --no-interaction and --prefer-dist for CI
