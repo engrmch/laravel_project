@@ -3,43 +3,52 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      php: 8.1 # This tells CodeBuild to use PHP 8.1
+      php: 8.1
     commands:
       - echo "--- BUILD INITIATED WITH LATEST BUILDSPEC VERSION X.X ---"
-       - cd $CODEBUILD_SRC_DIR # ✅ Change to the project root
+      - cd $CODEBUILD_SRC_DIR # Change to the project root
       - echo "Installing Composer..."
       - curl -sS https://getcomposer.org/installer | php
       - mv composer.phar /usr/local/bin/composer
-      - echo "Ensuring bootstrap/cache exists and is writable..."
-      # Add these lines to ensure cache directory exists and is writable
+      
+      # --- IMPORTANT: Ensure .env and key are set up BEFORE composer install and artisan commands ---
+      - echo "Setting up environment and generating application key..."
+      - cp .env.example .env || true # Copy .env.example, ignore if it doesn't exist
+      - php artisan key:generate || true # Generate application key, ignore if it fails (e.g., already exists)
+      # --- End of .env and key setup ---
+
+      - echo "Ensuring bootstrap/cache and storage directories exist and are writable..."
       - mkdir -p bootstrap/cache
       - mkdir -p storage/framework/views
       - mkdir -p storage/framework/cache
       - mkdir -p storage/logs
-      - chmod -R 777 bootstrap/cache # Add this line
+      - chmod -R 777 bootstrap/cache
       - chmod -R 777 storage
 
-      # Remove abandoned swiftmailer package if present
-      - echo "Removing swiftmailer..."
+      - echo "Removing swiftmailer if present..."
       - composer remove swiftmailer/swiftmailer || true
 
-      # Add symfony/mailer and required dependencies
-      - echo "Installing symfony/mailer..."
-      - composer require symfony/mailer symfony/http-client
-      
-      # ✅ Composer install with scripts disabled and superuser allowed
+      - echo "Installing symfony/mailer and required dependencies..."
+      - composer require symfony/mailer symfony/http-client --no-interaction
+
       - echo "Installing dependencies without scripts (as root)..."
       - COMPOSER_ALLOW_SUPERUSER=1 composer install --no-scripts --no-interaction --prefer-dist
 
-      - echo "Running post-install artisan scripts manually..."
+      - echo "Dumping Composer autoload files..."
+      - composer dump-autoload
+
+      - echo "Clearing Laravel caches before package discovery..."
+      - php artisan config:clear || true # Clear config cache
+      - php artisan cache:clear || true  # Clear application cache
+      - php artisan view:clear || true   # Clear view cache
+
+      - echo "Running post-install artisan scripts manually (package:discover)..."
       - php artisan package:discover
 
   pre_build:
     commands:
       - cd $CODEBUILD_SRC_DIR
-      - echo "Setting up environment..."
-      - cp .env.example .env || true
-      - php artisan key:generate || true
+      - echo "Pre-build phase complete." # No specific commands needed here anymore as .env setup moved
 
   build:
     commands:
@@ -56,4 +65,4 @@ phases:
 artifacts:
   files:
     - '**/*' # This packages all files as the build artifact. Adjust as needed.
-    discard-paths: no
+  discard-paths: no
