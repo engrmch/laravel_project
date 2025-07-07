@@ -1,0 +1,32 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      php: 8.1
+    commands:
+      - echo "Installing dependencies..."
+      - php -v
+      - composer install
+      - cp .env.example .env || true
+      - php artisan config:clear || true
+      - php artisan cache:clear || true
+
+  pre_build:
+    commands:
+      - echo "Setting Laravel application key..."
+      - php artisan key:generate
+
+  build:
+    commands:
+      - echo "Running migrations (optional)..."
+      - php artisan migrate --force || true
+
+  post_build:
+    commands:
+      - echo "Laravel build complete."
+
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: no
