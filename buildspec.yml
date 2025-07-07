@@ -12,6 +12,7 @@ phases:
       # Add these lines to ensure cache directory exists and is writable
       - mkdir -p bootstrap/cache # Ensure the directory exists
       - chmod -R 777 storage bootstrap/cache # Give write permissions to storage and cache
+      - chmod -R 777 bootstrap/cache # Add this line
       # Note: 777 is for build environments. For deployed code, restrict permissions further.
       - echo "Installing Composer dependencies..."
       - composer install --no-interaction --prefer-dist # Add --no-interaction and --prefer-dist for CI
