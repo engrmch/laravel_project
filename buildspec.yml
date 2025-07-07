@@ -5,8 +5,7 @@ phases:
     runtime-versions:
       php: 8.1
     commands:
-      - echo "Installing dependencies..."
-      - php -v
+      - echo "Installing Composer dependencies..."
       - composer install
       - cp .env.example .env || true
       - php artisan config:clear || true
@@ -14,17 +13,17 @@ phases:
 
   pre_build:
     commands:
-      - echo "Setting Laravel application key..."
+      - echo "Generating app key..."
       - php artisan key:generate
 
   build:
     commands:
-      - echo "Running migrations (optional)..."
+      - echo "Running database migrations..."
       - php artisan migrate --force || true
 
   post_build:
     commands:
-      - echo "Laravel build complete."
+      - echo "Build completed!"
 
 artifacts:
   files:
