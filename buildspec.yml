@@ -3,32 +3,34 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      php: 8.1
+      php: 8.1 # CodeBuild will attempt to set up PHP 8.1 for you
     commands:
-      - echo "Installing Composer..."
-      - curl -sS https://getcomposer.org/installer | php
-      - mv composer.phar /usr/local/bin/composer
-      - echo "Installing Composer dependencies..."
-      - composer install
+      # Add any other installation commands here, e.g., Composer, npm, etc.
+      - echo "Installing dependencies..."
+      - composer install --no-interaction --prefer-dist
 
   pre_build:
     commands:
-      - echo "Setting up environment..."
-      - cp .env.example .env || true
-      - php artisan key:generate || true
+      - echo "Running pre-build checks..."
+      # Add any pre-build commands like linting, testing, etc.
 
   build:
     commands:
-      - echo "Running migrations..."
-      - php artisan migrate --force || true
-      - echo "Laravel application build completed."
+      - echo "Building the application..."
+      # Add your build commands here, e.g., compiling assets, running tests, etc.
+      - # Example: For a simple PHP application, you might not have a complex "build" step.
+        # You might just be moving files or running framework-specific commands.
 
   post_build:
     commands:
-      - echo "Build completed!"
+      - echo "Build completed on `date`"
+      # Add any post-build commands, e.g., cleaning up, deploying, etc.
 
 artifacts:
   files:
-    - '**/*'
-  discard-paths: no
-
+    - '**/*' # This will include all files from your source directory in the artifact
+  # You can be more specific about what files to include, e.g.,
+  # - 'dist/**/*'
+  # - 'appspec.yml'
+  # - 'index.php'
+  # base-directory: 'dist' # If your build output is in a 'dist' folder
