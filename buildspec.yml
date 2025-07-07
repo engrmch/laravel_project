@@ -5,42 +5,30 @@ phases:
     runtime-versions:
       php: 8.1
     commands:
+      - echo "Installing Composer..."
+      - curl -sS https://getcomposer.org/installer | php
+      - mv composer.phar /usr/local/bin/composer
       - echo "Installing Composer dependencies..."
       - composer install
 
-
   pre_build:
     commands:
-      - echo "Generating app key..."
-      - php artisan key:generate
+      - echo "Setting up environment..."
+      - cp .env.example .env || true
+      - php artisan key:generate || true
 
   build:
     commands:
-      - echo "Running database migrations..."
+      - echo "Running migrations..."
       - php artisan migrate --force || true
+      - echo "Laravel application build completed."
 
   post_build:
     commands:
-      - echo "Build completed!
-      - echo Installing dependencies...
-      - curl -sS https://getcomposer.org/installer | php
-      - mv composer.phar /usr/local/bin/composer
-      - composer install
-  pre_build:
-    commands:
-      - echo Pre-build steps...
-      - cp .env.example .env || true
-      - php artisan key:generate || true
-  build:
-    commands:
-      - echo Laravel application build completed.
-
+      - echo "Build completed!"
 
 artifacts:
   files:
     - '**/*'
-
   discard-paths: no
-=======
 
->>>>>>> 4ed8d54 (Add buildspec.yml for CodeBuild)
