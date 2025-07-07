@@ -7,9 +7,7 @@ phases:
     commands:
       - echo "Installing Composer dependencies..."
       - composer install
-      - cp .env.example .env || true
-      - php artisan config:clear || true
-      - php artisan cache:clear || true
+
 
   pre_build:
     commands:
