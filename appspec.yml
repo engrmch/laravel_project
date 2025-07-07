@@ -3,6 +3,7 @@ os: linux
 files:
   - source: /
     destination: /var/www/html/laravel_project
+    overwrite: yes
 
 hooks:
   BeforeInstall:
